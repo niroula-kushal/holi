@@ -1,0 +1,142 @@
+<div class="gentle-wind" id="paint-sky">
+	<h3>
+		Happy Holi
+	</h3>
+</div>
+
+<style>
+
+	.gentle-wind
+	{
+		height: 100%;
+		width: 100%;
+		position: relative;
+	}
+	.gentle-wind h3
+	{
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		color: white;
+		font-size: 3em;
+		text-shadow: 4px 4px 4px black, -2px -2px 2px black;
+	}
+</style>
+
+
+<script>
+	var paintSky = document.getElementById("paint-sky");
+	var paintInProgress = false;
+	paintSky.addEventListener("mousemove", lightUp);
+	paintSky.addEventListener("click", lightUp);
+
+	function lightUp(e) {
+		if (paintInProgress) return;
+		paintInProgress = true;
+		var CSS_COLOR_NAMES = ["AliceBlue","AntiqueWhite","Aqua","Aquamarine","Azure","Beige","Bisque","Black","BlanchedAlmond","Blue","BlueViolet","Brown","BurlyWood","CadetBlue","Chartreuse","Chocolate","Coral","CornflowerBlue","Cornsilk","Crimson","Cyan","DarkBlue","DarkCyan","DarkGoldenRod","DarkGray","DarkGrey","DarkGreen","DarkKhaki","DarkMagenta","DarkOliveGreen","Darkorange","DarkOrchid","DarkRed","DarkSalmon","DarkSeaGreen","DarkSlateBlue","DarkSlateGray","DarkSlateGrey","DarkTurquoise","DarkViolet","DeepPink","DeepSkyBlue","DimGray","DimGrey","DodgerBlue","FireBrick","FloralWhite","ForestGreen","Fuchsia","Gainsboro","GhostWhite","Gold","GoldenRod","Gray","Grey","Green","GreenYellow","HoneyDew","HotPink","IndianRed","Indigo","Ivory","Khaki","Lavender","LavenderBlush","LawnGreen","LemonChiffon","LightBlue","LightCoral","LightCyan","LightGoldenRodYellow","LightGray","LightGrey","LightGreen","LightPink","LightSalmon","LightSeaGreen","LightSkyBlue","LightSlateGray","LightSlateGrey","LightSteelBlue","LightYellow","Lime","LimeGreen","Linen","Magenta","Maroon","MediumAquaMarine","MediumBlue","MediumOrchid","MediumPurple","MediumSeaGreen","MediumSlateBlue","MediumSpringGreen","MediumTurquoise","MediumVioletRed","MidnightBlue","MintCream","MistyRose","Moccasin","NavajoWhite","Navy","OldLace","Olive","OliveDrab","Orange","OrangeRed","Orchid","PaleGoldenRod","PaleGreen","PaleTurquoise","PaleVioletRed","PapayaWhip","PeachPuff","Peru","Pink","Plum","PowderBlue","Purple","Red","RosyBrown","RoyalBlue","SaddleBrown","Salmon","SandyBrown","SeaGreen","SeaShell","Sienna","Silver","SkyBlue","SlateBlue","SlateGray","SlateGrey","Snow","SpringGreen","SteelBlue","Tan","Teal","Thistle","Tomato","Turquoise","Violet","Wheat","White","WhiteSmoke","Yellow","YellowGreen"];
+
+		var colorLen = CSS_COLOR_NAMES.length;
+		var particles = [];
+		for (var i = 1; i <= getRandomIntInclusive(10,15); i++) {
+			var x = getRandomIntInclusive(e.clientX,e.clientX + getRandomIntInclusive(-150, 150));
+			var y = getRandomIntInclusive(e.clientY,e.clientY + getRandomIntInclusive(-150, 150));
+
+			var originX = e.clientX;
+			var originY = e.clientY;
+
+			var height = getRandomIntInclusive(3, 15);
+
+			var color = CSS_COLOR_NAMES[getRandomIntInclusive(0, colorLen)];
+
+			particles.push((new Particle()).setOriginX(originX).setOriginY(originY).setColor(color).setHeight(height).setWidth(height).render().setDestinationX(x).setDestinationY(y).update().getElement());
+		}
+		setTimeout(function() {
+			removeElements(particles);
+		},5000);
+		setTimeout(function(){ paintInProgress = false; }, 100);
+	}
+
+	function removeElements(elements) {
+			for(var element of elements) element.parentElement.removeChild(element);
+		}
+
+
+	var Particle = function()
+	{
+		var originX = 0;
+		var originY = 0;
+
+		var destinationX = 0;
+		var destinationY = 0;
+
+		var height = 10;
+		var width  = 10;
+
+		this.elm = null;
+
+		this.setOriginX 		= function(x) { originX = x; return this; };
+		this.setOriginY 		= function(y) { originY = y; return this; };
+		this.setDestinationX 	= function(x) { destinationX = x; return this; };
+		this.setDestinationY 	= function(y) { destinationY = y; return this; };
+		this.setColor           = function(col) { color = col; return this; }   
+		this.setHeight           = function(h) { height = h; return this; }   
+		this.setWidth           = function(w) { width = w; return this; }
+
+		this.render             = function() {
+			var elm = document.createElement('span');
+			elm.className = "particle";
+			elm.style.top = originY + "px";
+			elm.style.left= originX + "px";
+			elm.style.backgroundColor = color;
+			elm.style.height = height + "px";
+			elm.style.width  = width  + "px";
+			document.getElementById('paint-sky').append(elm);
+			this.elm = elm;
+			return this;
+		};
+
+		this.update             = function() {
+			this.elm.style.top = destinationY + "px";
+			this.elm.style.left = destinationX + "px";
+			return this;
+		}
+
+		this.getElement = function() { return this.elm; }
+
+	};
+
+	function getRandomIntInclusive(min, max) {
+	  min = Math.ceil(min);
+	  max = Math.floor(max);
+	  return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
+	}
+
+</script>
+<style type="text/css">
+.particle
+{
+	width: 10px;
+	height: 10px;
+	background: indigo;
+	position: fixed;
+	border-radius: 50%;
+	box-shadow: 1px 1px 3px rgba(0,0,0, .5);
+	transition: all .2s;
+	top: 0px; left: 0px;
+	animation: falldown 5s ease;
+	animation-fill-mode: forwards;
+}
+@keyframes falldown {
+	0% {
+
+	}
+	100% {
+		top: 110%;
+		height: 0px;
+		width: 0px;
+	}
+}
+
+
+</style>
